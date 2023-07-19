@@ -4,11 +4,18 @@ import matplotlib.pyplot as plt
 import json
 import os
 from PIL import Image
+import albumentations as Al
 
 
 Augment = True
+extranumber = 3
 line_lenght = 7
 char_size = 65
+
+transform = Al.Compose([
+    Al.Resize(width=char_size, height=char_size),
+    Al.Rotate(25,p=0.75)
+])
 
 def create_dir(path, copy = 0):
     if(copy != 0):
@@ -52,7 +59,12 @@ for page_index in range(len(pdf_file)):
         # Augment images
         if(Augment):
             # use albuments create new array and save it to directory
-            pass
+            for extra in range(extranumber-1):
+                # Augment
+                trans_pic = transform(image  = cropped_pic)
+                # save augment image
+                im = Image.fromarray(trans_pic["image"])
+                im.save("./Dataset_result/"+directory_name+"/"+labels[i]+"/{}_{}.jpeg".format(labels[i],extra+1))
         # enter new line
         if((i+1)%line_lenght==0):cursor_y += char_size
 
